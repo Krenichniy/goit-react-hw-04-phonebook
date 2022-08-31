@@ -5,38 +5,27 @@ import ContactsList from './ContactsList';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { nanoid } from 'nanoid'
 import styled from 'styled-components'
-
+let isFirstTimeAppStarted = true;
 const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
+const STORAGE_KEY = 'contacts';
   useEffect(() => {
     setContacts(getDataFromStorage())
-    console.log('test')
   }, [])
   
   useEffect(() => {
+    if (isFirstTimeAppStarted) { isFirstTimeAppStarted = false; return };
+
     updateStorage(contacts)
   }, [contacts])
-  // state = {
-  //    contacts: [
-  //     { id: 'id-1', name: 'Rosie Simpson', tel: '459-12-56' },
-  //     { id: 'id-2', name: 'Hermione Kline', tel: '443-89-12' },   
-  //     { id: 'id-3', name: 'Eden Clements', tel: '645-17-79' },
-  //     { id: 'id-4', name: 'Annie Copeland', tel: '227-91-26' },
-  //   ],
-  //   filter: '',
-  // }
-  
-  //  const formSubmitHandler = (data) => {
-  //   this.state.contacts.push(data);
-  // }
 
   const showValidationMessage = (message) => {
       Notify.warning(message);
   }
 
-   const addNewContact = useCallback((newContact) => {
+   const addNewContact = (newContact) => {
     const isExist = Object.keys(newContact).find(key => {
       const subString = newContact[key].toLocaleUpperCase();
       const contact = contacts.find(el => el[key].toLocaleUpperCase().includes(subString));
@@ -49,7 +38,7 @@ const App = () => {
      newContact.id = nanoid(10)
      setContacts(prevContacts => [...prevContacts, newContact])
      updateStorage(contacts);
-   }, [])
+   }
   
     const getFiltredList = () => {
     if (filter) {
@@ -81,11 +70,11 @@ const App = () => {
 
 
    const updateStorage = (contacts) => {
-    localStorage.setItem('contacts', JSON.stringify(contacts))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts))
   }
 
   const getDataFromStorage = () => {
-    return JSON.parse(localStorage.getItem('contacts') || '[]')
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
   }
 
     const renderList = getFiltredList();
