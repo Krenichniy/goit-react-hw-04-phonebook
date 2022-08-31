@@ -51,14 +51,14 @@ const STORAGE_KEY = 'contacts';
   }
 
  const onFilterChange = (event ) => {
-    const { name, value } = event.currentTarget;
+    const { value } = event.currentTarget;
     setFilter(value);
   }
 
   const removeItem = useCallback((id) => {
     setContacts(prevContacts => prevContacts.filter(contact => contact.id !== id));
     updateStorage(contacts);
-  }, [])
+  }, [contacts])
 //   componentDidMount() {
 //     this.setState({contacts:this.getDataFromStorage()})
 // }
